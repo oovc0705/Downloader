@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="MyApp.Views.PlatformPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:MyApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MyApp.Models"
+    xmlns:views="using:MyApp.Views"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="DownloadTaskTemplate" x:DataType="models:DownloadItem">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- 标题 + 操作按钮 -->
+                    <Grid Grid.Row="0" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            MaxLines="1"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="{x:Bind Title, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
+                        <StackPanel
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="4"
+                            VerticalAlignment="Center">
+                            <Button
+                                Click="OnCancelItemClick"
+                                Style="{StaticResource RowIconAction}"
+                                ToolTipService.ToolTip="取消下载"
+                                Visibility="{x:Bind views:PlatformPage.ActiveVis(IsActive), Mode=OneWay}">
+                                <FontIcon FontSize="14" Glyph="&#xE711;" />
+                            </Button>
+                            <Button
+                                Click="OnTaskRetryClick"
+                                Style="{StaticResource RowIconAction}"
+                                ToolTipService.ToolTip="重新下载"
+                                Visibility="{x:Bind views:PlatformPage.RetryVis(Status), Mode=OneWay}">
+                                <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                            </Button>
+                            <Button
+                                Click="OnTaskOpenItemClick"
+                                Style="{StaticResource RowIconAction}"
+                                ToolTipService.ToolTip="打开所在文件夹"
+                                Visibility="{x:Bind views:PlatformPage.CompletedVis(Status), Mode=OneWay}">
+                                <FontIcon FontSize="14" Glyph="&#xED25;" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 进度条 + 百分比 -->
+                    <Grid
+                        Grid.Row="1"
+                        ColumnSpacing="10"
+                        Visibility="{x:Bind views:PlatformPage.BarVis(Status), Mode=OneWay}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Maximum="100"
+                            Value="{x:Bind Progress, Mode=OneWay}"
+                            IsIndeterminate="{x:Bind views:PlatformPage.IsBarIndeterminate(Status), Mode=OneWay}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Bind views:PlatformPage.ProgressText(Progress), Mode=OneWay}" />
+                    </Grid>
+
+                    <!-- 状态胶囊 + 清晰度/速度信息 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+                        <Border
+                            Padding="8,2"
+                            VerticalAlignment="Center"
+                            Background="{x:Bind views:PlatformPage.PillBackground(Status), Mode=OneWay}"
+                            CornerRadius="9">
+                            <TextBlock
+                                FontSize="11"
+                                Foreground="{x:Bind views:PlatformPage.PillForeground(Status), Mode=OneWay}"
+                                Text="{x:Bind views:PlatformPage.StatusWord(Status), Mode=OneWay}" />
+                        </Border>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Bind views:PlatformPage.MetaText(QualityLabel, Speed, Eta), Mode=OneWay}"
+                            Visibility="{x:Bind views:PlatformPage.MetaVis(QualityLabel, Speed, Eta), Mode=OneWay}" />
+                    </StackPanel>
+
+                    <!-- 错误信息 -->
+                    <TextBlock
+                        Grid.Row="3"
+                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="{x:Bind Error, Mode=OneWay}"
+                        TextWrapping="Wrap"
+                        Visibility="{x:Bind views:PlatformPage.ErrorVis(Error), Mode=OneWay}" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="HistoryRowTemplate" x:DataType="models:HistoryRecord">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="3">
+                        <TextBlock
+                            MaxLines="1"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="{x:Bind Title}"
+                            TextTrimming="CharacterEllipsis" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Bind views:PlatformPage.FormatTime(FinishedAt)}" />
+                            <Ellipse
+                                Width="6"
+                                Height="6"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Center"
+                                Fill="{ThemeResource SystemFillColorSuccessBrush}"
+                                Visibility="{x:Bind views:PlatformPage.StatusOkVis(StatusText)}" />
+                            <TextBlock
+                                Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="已完成"
+                                Visibility="{x:Bind views:PlatformPage.StatusOkVis(StatusText)}" />
+                            <Ellipse
+                                Width="6"
+                                Height="6"
+                                Margin="2,0,0,0"
+                                VerticalAlignment="Center"
+                                Fill="{ThemeResource SystemFillColorCriticalBrush}"
+                                Visibility="{x:Bind views:PlatformPage.StatusFailVis(StatusText)}" />
+                            <TextBlock
+                                MaxLines="1"
+                                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Bind StatusText}"
+                                TextTrimming="CharacterEllipsis"
+                                Visibility="{x:Bind views:PlatformPage.StatusFailVis(StatusText)}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="4"
+                        VerticalAlignment="Center">
+                        <Button
+                            Click="OnHistoryOpenClick"
+                            Style="{StaticResource RowIconAction}"
+                            ToolTipService.ToolTip="在文件夹中显示"
+                            Visibility="{x:Bind views:PlatformPage.HistoryFileVis(FilePath)}">
+                            <FontIcon FontSize="14" Glyph="&#xED25;" />
+                        </Button>
+                        <Button
+                            Click="OnHistoryDeleteClick"
+                            Style="{StaticResource RowIconAction}"
+                            ToolTipService.ToolTip="删除这条记录">
+                            <FontIcon FontSize="14" Glyph="&#xE74D;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Padding="{StaticResource PageContentPadding}">
+        <Grid
+            MaxWidth="1080"
+            HorizontalAlignment="Center"
+            RowSpacing="{StaticResource SectionSpacing}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 输入区：链接输入 + 通知 + 目录/清晰度偏好 -->
+            <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="16,14">
+                <Grid RowSpacing="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            x:Name="UrlBox"
+                            MinHeight="40"
+                            VerticalAlignment="Center"
+                            PlaceholderText="粘贴内容链接，回车即可开始下载"
+                            KeyDown="OnUrlBoxKeyDown"
+                            TextChanged="OnUrlBoxTextChanged" />
+                        <Button
+                            Grid.Column="1"
+                            MinWidth="110"
+                            VerticalAlignment="Stretch"
+                            Click="OnDownloadClick"
+                            Style="{StaticResource PrimaryActionButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon
+                                    FontSize="16"
+                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
+                                    Glyph="&#xE896;" />
+                                <TextBlock Text="下载" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- 操作反馈（校验失败 / 跨平台归队提示），可手动关闭 -->
+                    <InfoBar
+                        x:Name="InputNotice"
+                        Grid.Row="1"
+                        IsOpen="False" />
+
+                    <!-- 输入过程中实时提示链接将被归入哪个分区 -->
+                    <TextBlock
+                        x:Name="RouteHint"
+                        Grid.Row="2"
+                        Margin="2,0,0,0"
+                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text=""
+                        Visibility="Collapsed" />
+
+                    <StackPanel
+                        Grid.Row="3"
+                        Orientation="Horizontal"
+                        Spacing="20"
+                        VerticalAlignment="Center">
+                        <Button Click="OnPickFolderClick" Style="{StaticResource ChipButtonStyle}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="14" Glyph="&#xE8B7;" />
+                                <TextBlock
+                                    MaxWidth="340"
+                                    MaxLines="1"
+                                    Text="{x:Bind FolderDisplay, Mode=OneTime}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Button>
+                        <CheckBox
+                            x:Name="AskQualityCheck"
+                            Content="下载前询问清晰度"
+                            Checked="OnAskQualityChanged"
+                            Unchecked="OnAskQualityChanged" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 下载任务标题行 -->
+            <Grid Grid.Row="1" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource SectionHeaderStyle}"
+                        Text="下载任务" />
+                    <TextBlock
+                        x:Name="TasksCountBlock"
+                        Margin="0,2,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="" />
+                </StackPanel>
+                <HyperlinkButton
+                    Grid.Column="1"
+                    Padding="8,2,0,2"
+                    VerticalAlignment="Center"
+                    Click="OnClearFinishedClick"
+                    Content="清空已完成"
+                    ToolTipService.ToolTip="移除已完成、失败和已取消的任务" />
+            </Grid>
+
+            <!-- 任务列表 -->
+            <Grid Grid.Row="2">
+                <ListView
+                    x:Name="TaskList"
+                    ItemContainerStyle="{StaticResource RowItemStyle}"
+                    ItemTemplate="{StaticResource DownloadTaskTemplate}"
+                    ItemsSource="{x:Bind Tasks, Mode=OneTime}"
+                    SelectionMode="None" />
+                <StackPanel
+                    x:Name="TasksEmptyHint"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="4">
+                    <FontIcon
+                        HorizontalAlignment="Center"
+                        FontSize="30"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Glyph="&#xE896;" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="暂无下载任务" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="粘贴内容链接，解析后选择清晰度即可开始" />
+                </StackPanel>
+            </Grid>
+
+            <!-- 历史记录标题行 -->
+            <Grid Grid.Row="3" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource SectionHeaderStyle}"
+                        Text="历史记录" />
+                    <TextBlock
+                        x:Name="HistoryCountBlock"
+                        Margin="0,2,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="" />
+                </StackPanel>
+                <TextBox
+                    x:Name="HistorySearchBox"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    CornerRadius="18,18,18,18"
+                    MinHeight="36"
+                    PlaceholderText="搜索标题…"
+                    TextChanged="OnHistorySearchTextChanged" />
+                <HyperlinkButton
+                    Grid.Column="2"
+                    Padding="8,2,0,2"
+                    VerticalAlignment="Center"
+                    Click="OnClearHistoryClick"
+                    Content="清空本页记录" />
+            </Grid>
+
+            <!-- 历史记录列表 -->
+            <Grid Grid.Row="4" MaxHeight="280">
+                <ListView
+                    x:Name="HistoryList"
+                    IsItemClickEnabled="True"
+                    ItemClick="OnHistoryItemClick"
+                    ItemContainerStyle="{StaticResource RowItemStyle}"
+                    ItemTemplate="{StaticResource HistoryRowTemplate}"
+                    ItemsSource="{x:Bind HistoryItems, Mode=OneTime}"
+                    SelectionMode="None"
+                    ToolTipService.ToolTip="点击记录可打开文件所在位置" />
+                <StackPanel
+                    x:Name="HistoryEmptyHint"
+                    Margin="0,16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="4">
+                    <FontIcon
+                        HorizontalAlignment="Center"
+                        FontSize="30"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Glyph="&#xE81C;" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="还没有历史记录" />
+                    <TextBlock
+                        x:Name="HistoryEmptyCaption"
+                        HorizontalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="下载完成的任务会自动归档在这里" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

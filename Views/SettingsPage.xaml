@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="MyApp.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer Padding="{StaticResource PageContentPadding}">
+        <StackPanel
+            MaxWidth="860"
+            HorizontalAlignment="Center"
+            Spacing="{StaticResource SectionSpacing}">
+
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="设置" />
+            <TextBlock
+                Margin="0,-6,0,4"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="修改后自动保存；代理对新任务立即生效，并发数重启后生效" />
+
+            <!-- 网络 -->
+            <Border Padding="18,16" Style="{StaticResource ElevatedCardStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="网络" />
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Style="{StaticResource ItemTitleStyle}" Text="使用代理服务器" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="yt-dlp 不读 Windows 系统代理；配置后即可下载 YouTube / X / Instagram 等直连不通的平台"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            x:Name="ProxyToggle"
+                            Grid.Column="1"
+                            Toggled="OnProxyToggled" />
+                    </Grid>
+
+                    <StackPanel Spacing="6">
+                        <TextBox
+                            x:Name="ProxyUrlBox"
+                            IsEnabled="{x:Bind ProxyToggle.IsOn, Mode=OneWay}"
+                            MinHeight="40"
+                            PlaceholderText="http://127.0.0.1:7890（支持 http / https / socks5）"
+                            TextChanged="OnProxyUrlChanged" />
+                        <TextBlock
+                            x:Name="ProxyHint"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text=""
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 下载 -->
+            <Border Padding="18,16" Style="{StaticResource CardBorderStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="下载" />
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Style="{StaticResource ItemTitleStyle}" Text="最大并发下载数" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="同时处于下载阶段的任务上限（1-4），重启应用后生效"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <NumberBox
+                            x:Name="ConcurrencyBox"
+                            Grid.Column="1"
+                            MaxWidth="132"
+                            Maximum="4"
+                            Minimum="1"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Compact"
+                            ValueChanged="OnConcurrencyChanged"
+                            VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Style="{StaticResource ItemTitleStyle}" Text="完成后提取为 MP3 音频" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="仅对视频生效：下载完成自动用 ffmpeg 转出 MP3，不保留视频画面文件"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            x:Name="ExtractAudioSwitch"
+                            Grid.Column="1"
+                            Toggled="OnExtractAudioToggled" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 外观 -->
+            <Border Padding="18,16" Style="{StaticResource CardBorderStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="外观" />
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Style="{StaticResource ItemTitleStyle}" Text="配色方案" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="强调色与底色的搭配，与深浅模式独立组合，切换立即生效"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <RadioButtons
+                            x:Name="PaletteButtons"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            MaxColumns="5"
+                            SelectionChanged="OnPaletteSelectionChanged">
+                            <RadioButtons.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                        <Border
+                                            Width="20"
+                                            Height="20"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="10">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="{Binding BackgroundHex}" Offset="0" />
+                                                    <GradientStop Color="{Binding AccentHex}" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Text="{Binding Name}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </RadioButtons.ItemTemplate>
+                        </RadioButtons>
+                    </Grid>
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Style="{StaticResource ItemTitleStyle}" Text="应用主题" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="切换立即生效，重启后保持"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <RadioButtons
+                            x:Name="ThemeButtons"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            SelectionChanged="OnThemeSelectionChanged">
+                            <RadioButton Content="跟随系统" />
+                            <RadioButton Content="浅色" />
+                            <RadioButton Content="深色" />
+                        </RadioButtons>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 常规 -->
+            <Border Padding="18,16" Style="{StaticResource CardBorderStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Style="{StaticResource SectionHeaderStyle}" Text="常规" />
+
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Style="{StaticResource ItemTitleStyle}" Text="剪贴板自动填充" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="切回窗口时检测剪贴板，若为支持平台的链接则自动跳到对应分区并填入输入框"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ToggleSwitch
+                            x:Name="ClipboardSwitch"
+                            Grid.Column="1"
+                            Toggled="OnClipboardToggled" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

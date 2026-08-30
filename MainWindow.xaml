@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="MyApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:MyApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MayBe Downloader"
+    mc:Ignorable="d">
+    <!--
+        窗口底 = 方案底色（不透明，随配色方案与深浅模式整体变化，见 Styles/Palettes/*.xaml）。
+        曾用 Mica + 半透明纱罩，壁纸色透入导致发透、且把方案底色冲淡，已弃用——勿再加系统背景材质。
+    -->
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TitleBar x:Name="AppTitleBar" Title="MayBe Downloader">
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="Assets/AppIcon.ico" />
+            </TitleBar.IconSource>
+        </TitleBar>
+
+        <!--
+            The Frame hosts pages for your application content. The shell page
+            (top navigation with per-platform sections) lives in Views/ShellPage.xaml.
+        -->
+        <Frame x:Name="RootFrame" Grid.Row="1" />
+    </Grid>
+</Window>

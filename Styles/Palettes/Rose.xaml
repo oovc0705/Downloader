@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    配色方案：玫瑰暖粉  色相 345°（玫瑰红）
+    设计规则（换色必读，五套方案一致）：
+    1. 底色不透明、带明确色相（浅色 L≈92%，深色 L≈9% 带暖）——换方案一眼可辨；
+    2. 表面（卡片/输入/分层）近中性白/深灰，与底色拉开明度差，靠描边立层次，
+       色相不下渗大面积表面（否则整体发灰）；
+    3. 强调色只出现在交互元素；
+    4. NavigationView 内容区/顶栏透明露出底色；所有填充均落在不透明底上，杜绝透色。
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="SystemAccentColor">#C25069</Color>
+            <Color x:Key="SystemAccentColorLight1">#CE6279</Color>
+            <Color x:Key="SystemAccentColorLight2">#DA7C8F</Color>
+            <Color x:Key="SystemAccentColorLight3">#E9A3B1</Color>
+            <Color x:Key="SystemAccentColorDark1">#A83F55</Color>
+            <Color x:Key="SystemAccentColorDark2">#8C3143</Color>
+            <Color x:Key="SystemAccentColorDark3">#702434</Color>
+
+            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#C25069" />
+            <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="#A83F55" />
+            <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="#C25069" />
+            <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="#CE6279" />
+            <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="#C25069" />
+            <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="#A83F55" />
+            <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="#C25069" />
+            <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="#A83F55" />
+
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#F8E7EB" />
+            <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#F8E7EB" />
+            <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="#F2DCE2" />
+            <SolidColorBrush x:Key="SolidBackgroundFillColorTertiaryBrush" Color="#EBCDD6" />
+            <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#FFFBFC" />
+            <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#FDF1F4" />
+            <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#269A7180" />
+            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#FFFBFC" />
+            <SolidColorBrush x:Key="ControlFillColorDefaultBrush" Color="#F2FFFFFF" />
+            <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush" Color="#0E000000" />
+            <SolidColorBrush x:Key="SubtleFillColorTertiaryBrush" Color="#0A000000" />
+            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Default">
+            <Color x:Key="SystemAccentColor">#E38BA0</Color>
+            <Color x:Key="SystemAccentColorLight1">#E9A3B1</Color>
+            <Color x:Key="SystemAccentColorLight2">#EFB8C6</Color>
+            <Color x:Key="SystemAccentColorLight3">#F6D2DB</Color>
+            <Color x:Key="SystemAccentColorDark1">#C25069</Color>
+            <Color x:Key="SystemAccentColorDark2">#A83F55</Color>
+            <Color x:Key="SystemAccentColorDark3">#8C3143</Color>
+
+            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#E38BA0" />
+            <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="#EFB8C6" />
+            <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="#E9A3B1" />
+            <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="#E38BA0" />
+            <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="#E38BA0" />
+            <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="#EFB8C6" />
+            <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="#E38BA0" />
+            <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="#EFB8C6" />
+
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#241519" />
+            <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#241519" />
+            <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="#2E1B21" />
+            <SolidColorBrush x:Key="SolidBackgroundFillColorTertiaryBrush" Color="#3A222A" />
+            <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#2F1C23" />
+            <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#3A242C" />
+            <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#28E8B4C2" />
+            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#2F1C23" />
+            <SolidColorBrush x:Key="ControlFillColorDefaultBrush" Color="#14FFFFFF" />
+            <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush" Color="#15FFFFFF" />
+            <SolidColorBrush x:Key="SubtleFillColorTertiaryBrush" Color="#10FFFFFF" />
+            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

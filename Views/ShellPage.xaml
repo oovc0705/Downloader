@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="MyApp.Views.ShellPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <NavigationView
+        x:Name="NavView"
+        IsBackButtonVisible="Collapsed"
+        IsSettingsVisible="False"
+        PaneDisplayMode="Top"
+        SelectionChanged="OnNavSelectionChanged">
+
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="抖音" Tag="抖音">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{StaticResource IconDouyin}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="小红书" Tag="小红书">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{StaticResource IconXiaohongshu}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="哔哩哔哩" Tag="哔哩哔哩">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{StaticResource IconBilibili}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="YouTube" Tag="YouTube">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{StaticResource IconYouTube}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="X" Tag="X">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{ThemeResource IconX}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="Instagram" Tag="Instagram">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{StaticResource IconInstagram}" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
+
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem
+                Content="设置"
+                Tag="settings"
+                ToolTipService.ToolTip="代理、并发数、音频提取与主题">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE713;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.FooterMenuItems>
+
+        <Frame x:Name="ContentFrame" />
+    </NavigationView>
+</Page>
