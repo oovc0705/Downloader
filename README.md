@@ -22,6 +22,10 @@
 
 ## 安装
 
+https://github.com/oovc0705/Downloader/releases/latest
+
+或
+
 到 `AppPackages\` 目录（或 Releases）：
 
 1. 双击 `.cer` 证书，安装到「当前用户 → 受信任的人」；
