@@ -8,15 +8,15 @@
 
 ## 一、项目概述
 
-**MyApp** 是一个 Windows 桌面视频/图片下载器（**对外显示名 MayBe Downloader**，2026-08-29 起；代码标识、
-命名空间、数据目录仍用 MyApp，勿混淆）：用户在对应平台分区粘贴内容链接，程序自动解析并列出可选清晰度
+**MyApp** 是一个 Windows 桌面视频/图片下载器（**对外显示名与安装包名为 MayBe Downloader / MayBeDownloader**：显示名 2026-08-29 起，包 Identity Name 与 csproj 2026-08-31 起一并改名；C# 命名空间、
+数据目录仍用 MyApp，勿混淆）：用户在对应平台分区粘贴内容链接，程序自动解析并列出可选清晰度
 （图集内容则让用户勾选要下载哪几张），下载原视频/图片到指定目录。核心能力由打包内置的 **yt-dlp.exe + ffmpeg.exe**
 提供，C# 层负责 UI、任务队列、进度解析、Cookie 回退与平台特判。
 
 - 技术栈：**WinUI 3**（Windows App SDK 2.4.0）+ **.NET 10**（`net10.0-windows10.0.26100.0`）
 - 目标平台：x64（也配置了 x86 / ARM64）
 - 不是 git 仓库（截至 2026-08-27）
-- 解决方案即项目：仓库根目录就是唯一 csproj（`MyApp.csproj`），无 .sln
+- 解决方案即项目：仓库根目录就是唯一 csproj（`MayBeDownloader.csproj`，2026-08-31 前为 MyApp.csproj），无 .sln
 - **UI 形态（2026-08-27 大改 + 2026-08-28 视觉/交互优化后）**：`MainWindow` → `Views/ShellPage`（NavigationView 顶部导航，平台项带图标）→
   `Views/PlatformPage`（按平台参数化的单页面类，六个平台共用；输入卡内含 InfoBar 通知与路由提示，任务卡带状态胶囊与重试/清理）。已删除 MainPage。
 - **应用内支持平台（导航分区 + 入队白名单）**：抖音、小红书、哔哩哔哩、YouTube、X、Instagram
@@ -32,7 +32,7 @@ dotnet build -p:Platform=x64 -c Debug
 dotnet run -p:Platform=x64
 ```
 
-⚠️ **直接双击 `bin\...\MyApp.exe` 会崩溃**：
+⚠️ **直接双击 `bin\...\MayBeDownloader.exe` 会崩溃**：
 `COMException 0x80040154 (REGDB_E_CLASSNOTREG)` —— 未注册包身份的 WinUI 3 应用需要包身份（winapp 注册后由
 `dotnet run` 启动）。调试期崩溃先检查是不是这个原因。
 
@@ -46,10 +46,10 @@ dotnet build -c Release -p:Platform=x64 \
   -p:PublishTrimmed=false
 ```
 
-- 产出：`AppPackages\MyApp_<版本>_x64_Test\`，内含 `.msix`（约 227MB）、`.cer`、`Install.ps1`/
+- 产出：`AppPackages\MayBeDownloader_<版本>_x64_Test\`，内含 `.msix`（约 227MB）、`.cer`、`Install.ps1`/
   `Add-AppDevPackage.ps1` 助手脚本。
 - 安装：①双击包内 `.cer` → 安装到「当前用户 → 受信任的人」；②双击 `.msix`（应用安装程序）或
-  `Add-AppxPackage .\MyApp_*.msix`。换机器安装只需这两个文件。
+  `Add-AppxPackage .\MayBeDownloader_*.msix`。换机器安装只需这两个文件。
 - `PublishTrimmed` 必须显式关：图集勾选器走 `XamlReader.Load` 运行时模板 + 经典 Binding（反射），
   裁剪会破坏 XamlTypeInfo（csproj 里 Release 默认 true 是模板遗留）。
 - 签名：`AppSigning.pfx`（**无密码** pfx，csproj `PackageCertificateKeyFile` 引用；带密码的 pfx 会被
@@ -217,6 +217,14 @@ Export-Certificate -Cert $cert -FilePath AppSigning.cer
       `DownloadService.SupportedPlatforms` 并给 ShellPage 加导航项即可。
 
 ## 七、变更日志
+
+- 2026-08-31 **项目名统一为 MayBe Downloader（用户要求）**：包 Identity Name（GUID→`MayBeDownloader`，
+  包文件名随之变为 `MayBeDownloader_<版本>_<架构>.msix`）、csproj 文件名（`MyApp.csproj`→`MayBeDownloader.csproj`，
+  AssemblyName 随之，exe 为 `MayBeDownloader.exe`；RootNamespace 显式保持 MyApp 故命名空间不动）、
+  launchSettings 配置名同步。显示名/窗口标题/README 标题此前（08-29）已是 MayBe Downloader。
+  注意：包族（PackageFamilyName）变化 → 旧 GUID 开发包成为独立应用需手动卸载，其虚拟化数据
+  （`%LOCALAPPDATA%\Packages\<旧族>\LocalCache\...`）不自动迁移；C# 命名空间与 `%LOCALAPPDATA%\MyApp`
+  数据目录按既定约定保持 MyApp。发布者显示名仍为 AppPublisher（CN=AppPublisher 证书匹配，未动）。
 
 - 2026-08-30 新增 README.md（对外简介：功能一览、安装两步、开发命令；从简不重复 agent.md 细节）。
 

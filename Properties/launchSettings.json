@@ -1,9 +1,9 @@
 {
   "profiles": {
-    "MyApp (Package)": {
+    "MayBeDownloader (Package)": {
       "commandName": "MsixPackage"
     },
-    "MyApp (Unpackaged)": {
+    "MayBeDownloader (Unpackaged)": {
       "commandName": "Project"
     }
   }

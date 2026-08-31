@@ -9,7 +9,7 @@
   IgnorableNamespaces="uap rescap systemai">
 
   <Identity
-    Name="2F12C0BC-5DF7-4BEF-AF9C-43402D9E0CFB"
+    Name="MayBeDownloader"
     Publisher="CN=AppPublisher"
     Version="1.0.0.0" />
 
